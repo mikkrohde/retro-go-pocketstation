@@ -1,7 +1,7 @@
 #ifndef __CPU_H__
 #define __CPU_H__
 
-#include "emu.h"
+#include "gnuboy.h"
 
 /* Quick access CPU registers */
 #ifdef IS_LITTLE_ENDIAN
@@ -60,6 +60,6 @@ extern cpu_t cpu;
 
 void cpu_reset(bool hard);
 int  cpu_emulate(int cycles);
-void cpu_burn(int cycles);
+void cpu_disassemble(addr_t a, int c);
 
 #endif

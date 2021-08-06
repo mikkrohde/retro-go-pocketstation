@@ -1,8 +1,6 @@
-#ifndef __REGS_H__
-#define __REGS_H__
+#pragma once
 
-
-#include "mem.h"
+#include "hw.h"
 
 /* General internal/io stuff */
 
@@ -86,7 +84,7 @@
 
 
 
-#define REG(n) ram.hi[(n)]
+#define REG(n) hw.himem[(n)]
 
 
 
@@ -170,6 +168,3 @@
 #define R_NR50 REG(RI_NR50)
 #define R_NR51 REG(RI_NR51)
 #define R_NR52 REG(RI_NR52)
-
-
-#endif

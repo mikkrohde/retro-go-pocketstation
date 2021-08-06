@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "emu.h"
+#include "gnuboy.h"
 #include "cpu.h"
-#include "mem.h"
 #include "regs.h"
 
+#if 0
 
 static const char *mnemonic_table[256] =
 {
@@ -550,7 +550,7 @@ static const byte operand_count[256] =
 
 /* replace with a real interactive debugger eventually... */
 
-void debug_disassemble(addr_t a, int c)
+void cpu_disassemble(addr_t a, int c)
 {
 	int i, j, k;
 	byte code;
@@ -644,3 +644,4 @@ void debug_disassemble(addr_t a, int c)
 	}
 }
 
+#endif

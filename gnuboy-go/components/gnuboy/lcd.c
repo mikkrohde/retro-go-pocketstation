@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "emu.h"
+#include "gnuboy.h"
 #include "regs.h"
 #include "hw.h"
-#include "mem.h"
 #include "lcd.h"
 #include "cpu.h"
 
@@ -29,10 +28,7 @@
 lcd_t lcd;
 fb_t fb;
 
-static uint16_t dmg_pal[4][4] = {
-	GB_DEFAULT_PALETTE, GB_DEFAULT_PALETTE,
-	GB_DEFAULT_PALETTE, GB_DEFAULT_PALETTE,
-};
+static uint16_t dmg_pal[4][4];
 static int dmg_selected_pal = 0;
 
 #define priused(attr) ({un32 *a = (un32*)(attr); (int)((a[0]|a[1]|a[2]|a[3]|a[4]|a[5]|a[6]|a[7])&0x80808080);})
@@ -582,58 +578,6 @@ static inline void pal_update(byte i)
 	fb.palette[i] = out;
 }
 
-static inline void pal_detect_dmg()
-{
-	const uint16_t *bgp, *obp0, *obp1;
-    uint8_t infoIdx = 0;
-	uint8_t checksum = 0;
-
-	// Calculate the checksum over 16 title bytes.
-	for (int i = 0; i < 16; i++)
-	{
-		checksum += readb(0x0134 + i);
-	}
-
-	// Check if the checksum is in the list.
-	for (size_t idx = 0; idx < sizeof(colorization_checksum); idx++)
-	{
-		if (colorization_checksum[idx] == checksum)
-		{
-			infoIdx = idx;
-
-			// Indexes above 0x40 have to be disambiguated.
-			if (idx > 0x40) {
-				// No idea how that works. But it works.
-				for (size_t i = idx - 0x41, j = 0; i < sizeof(colorization_disambig_chars); i += 14, j += 14) {
-					if (readb(0x0137) == colorization_disambig_chars[i]) {
-						infoIdx += j;
-						break;
-					}
-				}
-			}
-			break;
-		}
-	}
-
-	uint8_t palette = colorization_palette_info[infoIdx] & 0x1F;
-	uint8_t flags = (colorization_palette_info[infoIdx] & 0xE0) >> 5;
-
-	bgp  = dmg_game_palettes[palette][2];
-	obp0 = dmg_game_palettes[palette][(flags & 1) ? 0 : 1];
-	obp1 = dmg_game_palettes[palette][(flags & 2) ? 0 : 1];
-
-	if (!(flags & 4)) {
-		obp1 = dmg_game_palettes[palette][2];
-	}
-
-	MESSAGE_INFO("Using GBC palette %d\n", palette);
-
-	memcpy(&dmg_pal[0], bgp, 8); // BGP
-	memcpy(&dmg_pal[1], bgp, 8); // BGP
-	memcpy(&dmg_pal[2], obp0, 8); // OBP0
-	memcpy(&dmg_pal[3], obp1, 8); // OBP1
-}
-
 void pal_write(byte i, byte b)
 {
 	if (lcd.pal[i] == b) return;
@@ -659,7 +603,10 @@ void pal_set_dmg(int palette)
 	dmg_selected_pal = palette % (pal_count_dmg() + 1);
 
 	if (dmg_selected_pal == 0) {
-		pal_detect_dmg();
+		memcpy(&dmg_pal[0], cart.colorize[0], 8); // BGP
+		memcpy(&dmg_pal[1], cart.colorize[1], 8); // BGP
+		memcpy(&dmg_pal[2], cart.colorize[2], 8); // OBP0
+		memcpy(&dmg_pal[3], cart.colorize[3], 8); // OBP1
 	} else {
 		memcpy(&dmg_pal[0], dmg_palettes[dmg_selected_pal - 1], 8); // BGP
 		memcpy(&dmg_pal[1], dmg_palettes[dmg_selected_pal - 1], 8); // BGP
@@ -745,6 +692,23 @@ static void inline stat_change(int stat)
 
 	if (stat != 1) hw_interrupt(IF_VBLANK, 0);
 	stat_trigger();
+}
+
+
+static void hw_hdma()
+{
+	addr_t sa = ((addr_t)R_HDMA1 << 8) | (R_HDMA2&0xf0);
+	addr_t da = 0x8000 | ((addr_t)(R_HDMA3&0x1f) << 8) | (R_HDMA4&0xf0);
+	size_t cnt = 16;
+
+	while (cnt--)
+		writeb(da++, readb(sa++));
+	R_HDMA1 = sa >> 8;
+	R_HDMA2 = sa & 0xF0;
+	R_HDMA3 = 0x1F & (da >> 8);
+	R_HDMA4 = da & 0xF0;
+	R_HDMA5--;
+	hw.hdma--;
 }
 
 

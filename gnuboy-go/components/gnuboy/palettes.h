@@ -1,7 +1,5 @@
 #include <stdint.h>
 
-#define GB_DEFAULT_PALETTE { 0x6BDD, 0x3ED4, 0x1D86, 0x0860 }
-
 // Our custom colorization palettes
 static const uint16_t dmg_palettes[][4] = {
     { 0x6BDD, 0x3ED4, 0x1D86, 0x0860 }, // GB_DEFAULT_PALETTE

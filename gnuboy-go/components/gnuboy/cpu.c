@@ -1,9 +1,8 @@
-#include "emu.h"
+#include "gnuboy.h"
 #include "regs.h"
 #include "hw.h"
 #include "lcd.h"
 #include "cpu.h"
-#include "mem.h"
 #include "sound.h"
 
 // For cycle accurate emulation this needs to be 1
@@ -349,11 +348,6 @@ static inline void sound_advance(int cycles)
 	snd.cycles += cycles;
 }
 
-/* burn cpu cycles without running any instructions */
-void cpu_burn(int cycles)
-{
-
-}
 
 /* cpu_emulate()
 	Emulate CPU for time no less than specified
@@ -394,7 +388,7 @@ next:
 	IME = IMA;
 
 	// if (cpu.disassemble)
-	// 	debug_disassemble(PC, 1);
+	// 	cpu_disassemble(PC, 1);
 
 	op = FETCH;
 	clen = cycles_table[op];
@@ -865,9 +859,9 @@ next:
 		break;
 
 	default:
-		emu_die(
+		gnuboy_panic(
 			"invalid opcode 0x%02X at address 0x%04X, rombank = %d\n",
-			op, (PC-1) & 0xffff, mbc.rombank);
+			op, (PC-1) & 0xffff, cart.mbc.rombank);
 		break;
 	}
 

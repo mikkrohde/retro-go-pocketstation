@@ -80,11 +80,6 @@ typedef struct
 #define AM_TST_ABSX 18			/* special 'TST' addressing mode  */
 #define AM_XFER     19			/* special 7-byte transfer addressing mode  */
 
-typedef signed char SBYTE;
-typedef unsigned char UBYTE;
-typedef signed short SWORD;
-typedef unsigned short UWORD;
-
 extern h6280_t CPU;
 
 #endif
