@@ -26,14 +26,14 @@
 #include <mmc.h>
 #include <nes.h>
 
-static uint8 mram[4];
+static uint8_t mram[4];
 
 
-static void update(uint32 address, uint8 value)
+static void update(uint32_t address, uint8_t value)
 {
-   uint16 bank1 = ((address >> 6) & 0x7E) + (((address >> 6) & 1) & ((address >> 5) & 1));
-   uint16 bank2 = bank1 + (((address >> 5) & 1) ^ 1);
-   uint16 vbank = (((address & 0xF) << 2)) | (value & 0x3);
+   uint16_t bank1 = ((address >> 6) & 0x7E) + (((address >> 6) & 1) & ((address >> 5) & 1));
+   uint16_t bank2 = bank1 + (((address >> 5) & 1) ^ 1);
+   uint16_t vbank = (((address & 0xF) << 2)) | (value & 0x3);
 
    // Chip 2 doesn't exist
    if ((bank1 & 0x60) == 0x60) {
@@ -58,12 +58,12 @@ static void map228_init(rom_t *cart)
    update(0x8000, 0x00);
 }
 
-static uint8 map228_read(uint32 address)
+static uint8_t map228_read(uint32_t address)
 {
    return mram[address & 3] & 0xF;
 }
 
-static void map228_write(uint32 address, uint8 value)
+static void map228_write(uint32_t address, uint8_t value)
 {
    if (address >= 0x4020 && address <= 0x5FFF)
    {

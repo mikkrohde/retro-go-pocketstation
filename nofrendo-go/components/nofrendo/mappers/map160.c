@@ -33,7 +33,7 @@ static struct
 } irq;
 
 
-static void map160_write(uint32 address, uint8 value)
+static void map160_write(uint32_t address, uint8_t value)
 {
    if (address >= 0x8000 && address <= 0x8003)
    {

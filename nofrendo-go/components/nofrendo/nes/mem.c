@@ -29,7 +29,7 @@
 static mem_t mem;
 
 
-static void dummy_write(uint32 address, uint8 value)
+static void dummy_write(uint32_t address, uint8_t value)
 {
    UNUSED(address);
    UNUSED(value);
@@ -55,7 +55,7 @@ static const mem_write_handler_t write_handlers[] =
 };
 
 /* Set 2KB memory page */
-IRAM_ATTR void mem_setpage(uint32 page, uint8 *ptr)
+IRAM_ATTR void mem_setpage(uint32_t page, uint8_t *ptr)
 {
    ASSERT(page < 32);
    ASSERT(ptr);
@@ -74,11 +74,11 @@ IRAM_ATTR void mem_setpage(uint32 page, uint8 *ptr)
 }
 
 /* Get 2KB memory page */
-uint8 *mem_getpage(uint32 page)
+uint8_t *mem_getpage(uint32_t page)
 {
    ASSERT(page < 32);
 
-   uint8 *page_ptr = mem.pages[page];
+   uint8_t *page_ptr = mem.pages[page];
 
    if (MEM_PAGE_IS_VALID_PTR(page_ptr))
    {
@@ -89,9 +89,9 @@ uint8 *mem_getpage(uint32 page)
 }
 
 /* read a byte of 6502 memory space */
-IRAM_ATTR uint8 mem_getbyte(uint32 address)
+IRAM_ATTR uint8_t mem_getbyte(uint32_t address)
 {
-   uint8 *page = mem.pages_read[address >> MEM_PAGESHIFT];
+   uint8_t *page = mem.pages_read[address >> MEM_PAGESHIFT];
 
    /* Special memory handlers */
    if (MEM_PAGE_HAS_HANDLERS(page))
@@ -118,9 +118,9 @@ IRAM_ATTR uint8 mem_getbyte(uint32 address)
 }
 
 /* write a byte of data to 6502 memory space */
-IRAM_ATTR void mem_putbyte(uint32 address, uint8 value)
+IRAM_ATTR void mem_putbyte(uint32_t address, uint8_t value)
 {
-   uint8 *page = mem.pages_write[address >> MEM_PAGESHIFT];
+   uint8_t *page = mem.pages_write[address >> MEM_PAGESHIFT];
 
    /* Special memory handlers */
    if (MEM_PAGE_HAS_HANDLERS(page))
@@ -148,7 +148,7 @@ IRAM_ATTR void mem_putbyte(uint32 address, uint8 value)
    }
 }
 
-IRAM_ATTR uint32 mem_getword(uint32 address)
+IRAM_ATTR uint32_t mem_getword(uint32_t address)
 {
    return mem_getbyte(address + 1) << 8 | mem_getbyte(address);
 }

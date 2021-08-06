@@ -26,17 +26,17 @@
 #include <string.h>
 #include <mmc.h>
 
-static uint8 regs[4];
-static uint8 latch = 0;
+static uint8_t regs[4];
+static uint8_t latch = 0;
 static int bitcount = 0;
 static int prg_banks = 0;
 
 // Shouldn't that be packed? (It wasn't packed in SNSS...)
 typedef struct
 {
-   uint8 regs[4];
-   uint8 bitcount;
-   uint8 latch;
+   uint8_t regs[4];
+   uint8_t bitcount;
+   uint8_t latch;
 } mapper1Data;
 
 
@@ -94,7 +94,7 @@ static void update_prg()
    }
 }
 
-static void map1_write(uint32 address, uint8 value)
+static void map1_write(uint32_t address, uint8_t value)
 {
    // MESSAGE_INFO("MMC1 write: $%02X to $%04X\n", value, address);
 

@@ -27,12 +27,12 @@
 
 static struct
 {
-   uint16 counter, latch;
+   uint16_t counter, latch;
    bool enabled, reset;
 } irq;
 
-static uint16 command = 0;
-static uint16 vrombase = 0x0000;
+static uint16_t command = 0;
+static uint16_t vrombase = 0x0000;
 
 
 static void map64_hblank(int scanline)
@@ -56,7 +56,7 @@ static void map64_hblank(int scanline)
    }
 }
 
-static void map64_write(uint32 address, uint8 value)
+static void map64_write(uint32_t address, uint8_t value)
 {
    switch (address & 0xE001)
    {

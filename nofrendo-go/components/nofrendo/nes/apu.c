@@ -35,7 +35,7 @@
 static apu_t apu;
 
 /* vblank length table used for rectangles, triangle, noise */
-static const uint8 vbl_length[32] =
+static const short vbl_length[32] =
 {
     5, 127,
    10,   1,
@@ -56,30 +56,30 @@ static const uint8 vbl_length[32] =
 };
 
 /* frequency limit of rectangle channels */
-static const int16 freq_limit[8] =
+static const short freq_limit[8] =
 {
    0x3FF, 0x555, 0x666, 0x71C, 0x787, 0x7C1, 0x7E0, 0x7F0
 };
 
 /* noise frequency lookup table */
-static const int16 noise_freq[16] =
+static const short noise_freq[16] =
 {
      4,    8,   16,   32,   64,   96,  128,  160,
    202,  254,  380,  508,  762, 1016, 2034, 4068
 };
 
 /* DMC transfer freqs */
-static const int16 dmc_clocks[16] =
+static const short dmc_clocks[16] =
 {
    428, 380, 340, 320, 286, 254, 226, 214,
    190, 160, 142, 128, 106,  85,  72,  54
 };
 
 /* ratios of pos/neg pulse for rectangle waves */
-static const int16 duty_flip[4] = { 2, 4, 8, 12 };
+static const short duty_flip[4] = { 2, 4, 8, 12 };
 
 
-IRAM_ATTR void apu_fc_advance(int cycles)
+void apu_fc_advance(int cycles)
 {
    // https://wiki.nesdev.com/w/index.php/APU_Frame_Counter
    const int int_period = 4 * 7457;
@@ -137,10 +137,9 @@ INLINE void apu_build_luts(int num_samples)
 ** reg3: 0-2=high freq, 7-4=vbl length counter
 */
 #define  APU_MAKE_RECTANGLE(ch) \
-INLINE int32 apu_rectangle_##ch(void) \
+INLINE int apu_rectangle_##ch(void) \
 { \
-   int32 output, total; \
-   int num_times; \
+   int output, total, num_times; \
 \
    APU_VOLUME_DECAY(apu.rectangle[ch].output_vol); \
 \
@@ -230,7 +229,7 @@ APU_MAKE_RECTANGLE(1)
 ** reg2: low 8 bits of frequency
 ** reg3: 7-3=length counter, 2-0=high 3 bits of frequency
 */
-INLINE int32 apu_triangle(void)
+INLINE int apu_triangle(void)
 {
    APU_VOLUME_DECAY(apu.triangle.output_vol);
 
@@ -276,11 +275,11 @@ output:
 ** reg2: 7=small(93 byte) sample,3-0=freq lookup
 ** reg3: 7-4=vbl length counter
 */
-INLINE int32 apu_noise(void)
+INLINE int apu_noise(void)
 {
-   int32 outvol = 0;
-   int32 num_times = 0;
-   int32 total = 0;
+   int outvol = 0;
+   int num_times = 0;
+   int total = 0;
 
    APU_VOLUME_DECAY(apu.noise.output_vol);
 
@@ -354,7 +353,7 @@ INLINE void apu_dmcreload(void)
 ** reg2: 8 bits of 64-byte aligned address offset : $C000 + (value * 64)
 ** reg3: length, (value * 16) + 1
 */
-INLINE int32 apu_dmc(void)
+INLINE int apu_dmc(void)
 {
    APU_VOLUME_DECAY(apu.dmc.output_vol);
 
@@ -430,7 +429,7 @@ INLINE int32 apu_dmc(void)
 }
 
 
-IRAM_ATTR void apu_write(uint32 address, uint8 value)
+void apu_write(uint32_t address, uint8_t value)
 {
    int chan;
 
@@ -562,7 +561,7 @@ IRAM_ATTR void apu_write(uint32 address, uint8 value)
 
    case APU_WRE2:
       apu.dmc.regs[2] = value;
-      apu.dmc.cached_addr = 0xC000 + (uint16) (value << 6);
+      apu.dmc.cached_addr = 0xC000 + (uint16_t) (value << 6);
       break;
 
    case APU_WRE3:
@@ -641,9 +640,9 @@ IRAM_ATTR void apu_write(uint32 address, uint8 value)
 }
 
 /* Read from $4000-$4017 */
-IRAM_ATTR uint8 apu_read(uint32 address)
+uint8_t apu_read(uint32_t address)
 {
-   uint8 value;
+   uint8_t value;
 
    switch (address)
    {
@@ -681,7 +680,7 @@ IRAM_ATTR uint8 apu_read(uint32 address)
    return value;
 }
 
-void apu_process(int16 *buffer, size_t num_samples, bool stereo)
+void apu_process(short *buffer, size_t num_samples, bool stereo)
 {
    int prev_sample = apu.prev_sample;
 
@@ -724,10 +723,10 @@ void apu_process(int16 *buffer, size_t num_samples, bool stereo)
          accum = -0x8000;
 
       /* signed 16-bit output */
-      *buffer++ = (int16) accum;
+      *buffer++ = (short) accum;
 
       if (stereo)
-         *buffer++ = (int16) accum;
+         *buffer++ = (short) accum;
 
       // Advance frame counter
       // apu_fc_advance(apu.cycle_rate);
@@ -768,7 +767,7 @@ void apu_reset(void)
    apu_build_luts(apu.samples_per_frame);
 
    /* initialize all channel members */
-   for (uint32 addr = 0x4000; addr <= 0x4013; addr++)
+   for (uint32_t addr = 0x4000; addr <= 0x4013; addr++)
       apu_write(addr, 0);
 
    apu_write(APU_SMASK, 0x00);

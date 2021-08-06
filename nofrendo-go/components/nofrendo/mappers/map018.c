@@ -53,14 +53,14 @@ do { \
 static struct
 {
    int counter, enabled;
-   uint8 nybbles[4];
+   uint8_t nybbles[4];
    int clockticks;
 } irq;
 
-static uint8 lownybbles[8];
-static uint8 highnybbles[8];
-static uint8 lowprgnybbles[3];
-static uint8 highprgnybbles[3];
+static uint8_t lownybbles[8];
+static uint8_t highnybbles[8];
+static uint8_t lowprgnybbles[3];
+static uint8_t highprgnybbles[3];
 
 
 static void map18_init(rom_t *cart)
@@ -69,7 +69,7 @@ static void map18_init(rom_t *cart)
    irq.counter = irq.enabled = 0;
 }
 
-static void map18_write(uint32 address, uint8 value)
+static void map18_write(uint32_t address, uint8_t value)
 {
    switch (address)
    {
@@ -99,28 +99,28 @@ static void map18_write(uint32 address, uint8 value)
       irq.nybbles[0]=value&0x0F;
       irq.clockticks= (irq.nybbles[0]) | (irq.nybbles[1]<<4) |
                      (irq.nybbles[2]<<8) | (irq.nybbles[3]<<12);
-      irq.counter=(uint8)(irq.clockticks/114);
+      irq.counter=(uint8_t)(irq.clockticks/114);
       if(irq.counter>15) irq.counter-=16;
       break;
    case 0xE001:
       irq.nybbles[1]=value&0x0F;
       irq.clockticks= (irq.nybbles[0]) | (irq.nybbles[1]<<4) |
                      (irq.nybbles[2]<<8) | (irq.nybbles[3]<<12);
-      irq.counter=(uint8)(irq.clockticks/114);
+      irq.counter=(uint8_t)(irq.clockticks/114);
       if(irq.counter>15) irq.counter-=16;
       break;
    case 0xE002:
       irq.nybbles[2]=value&0x0F;
       irq.clockticks= (irq.nybbles[0]) | (irq.nybbles[1]<<4) |
                      (irq.nybbles[2]<<8) | (irq.nybbles[3]<<12);
-      irq.counter=(uint8)(irq.clockticks/114);
+      irq.counter=(uint8_t)(irq.clockticks/114);
       if(irq.counter>15) irq.counter-=16;
       break;
    case 0xE003:
       irq.nybbles[3]=value&0x0F;
       irq.clockticks= (irq.nybbles[0]) | (irq.nybbles[1]<<4) |
                      (irq.nybbles[2]<<8) | (irq.nybbles[3]<<12);
-      irq.counter=(uint8)(irq.clockticks/114);
+      irq.counter=(uint8_t)(irq.clockticks/114);
       if(irq.counter>15) irq.counter-=16;
       break;
    case 0xF000:

@@ -25,7 +25,7 @@
 #include <mmc.h>
 
 /* mapper 11: Color Dreams, Wisdom Tree */
-static void map11_write(uint32 address, uint8 value)
+static void map11_write(uint32_t address, uint8_t value)
 {
    UNUSED(address);
 

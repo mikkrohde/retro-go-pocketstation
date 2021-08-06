@@ -41,12 +41,12 @@ static void map229_init(rom_t *cart)
 /*******************************************/
 /* Mapper #229 write handler ($8000-$FFFF) */
 /*******************************************/
-static void map229_write(uint32 address, uint8 value)
+static void map229_write(uint32_t address, uint8_t value)
 {
    UNUSED(value);
 
    /* A4-A0 sets 8K CHR page */
-   mmc_bankvrom(8, 0x0000, (uint8) (address & 0x1F));
+   mmc_bankvrom(8, 0x0000, (uint8_t) (address & 0x1F));
 
    /* If A4-A1 are all low then select the first 32K,     */
    /* otherwise select a 16K bank at both $8000 and $C000 */
@@ -56,8 +56,8 @@ static void map229_write(uint32 address, uint8 value)
    }
    else
    {
-      mmc_bankrom (16, 0x8000, (uint8) (address & 0x1F));
-      mmc_bankrom (16, 0xC000, (uint8) (address & 0x1F));
+      mmc_bankrom (16, 0x8000, (uint8_t) (address & 0x1F));
+      mmc_bankrom (16, 0xC000, (uint8_t) (address & 0x1F));
    }
 
    /* A5: mirroring (low = vertical, high = horizontal) */

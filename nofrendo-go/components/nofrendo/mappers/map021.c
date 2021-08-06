@@ -48,8 +48,8 @@ static struct
 } irq;
 
 static bool select_c000 = 0;
-static uint8 lownybbles[8];
-static uint8 highnybbles[8];
+static uint8_t lownybbles[8];
+static uint8_t highnybbles[8];
 
 
 static void vrc4_init(rom_t *cart)
@@ -60,7 +60,7 @@ static void vrc4_init(rom_t *cart)
    irq.counter = irq.latch = 0;
 }
 
-static void vrc4_write(uint32 address, uint8 value)
+static void vrc4_write(uint32_t address, uint8_t value)
 {
    switch (address)
    {

@@ -54,16 +54,16 @@ typedef enum
 
 typedef struct
 {
-    uint8 connected;
-    uint8 state;
-    uint8 reads;
+    uint8_t connected;
+    uint8_t state;
+    uint8_t reads;
 } nesinput_t;
 
 extern void input_connect(nesinput_type_t input);
 extern void input_disconnect(nesinput_type_t input);
-extern void input_update(nesinput_type_t input, uint8 state);
+extern void input_update(nesinput_type_t input, uint8_t state);
 
-extern uint8 input_read(uint32 address);
-extern void input_write(uint32 address, uint8 value);
+extern uint8_t input_read(uint32_t address);
+extern void input_write(uint32_t address, uint8_t value);
 
 #endif /* _NESINPUT_H_ */

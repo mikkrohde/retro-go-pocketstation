@@ -22,29 +22,28 @@
 */
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <nofrendo.h>
+#include <input.h>
 #include <nes.h>
 
 
-void nofrendo_stop(void)
+int nofrendo_init(int system, int sample_rate, bool stereo)
 {
-    nes_poweroff();
-    nes_shutdown();
-    osd_shutdown();
-}
-
-int nofrendo_start(const char *filename, int system, int sample_rate, bool stereo)
-{
-    if (osd_init())
-        return -1;
-
     if (!nes_init(system, sample_rate, stereo))
     {
         MESSAGE_ERROR("Failed to create NES instance.\n");
         return -1;
     }
+
+    return 0;
+}
+
+int nofrendo_start(const char *filename, const char *savefile)
+{
+    nes_t *nes = nes_getptr();
 
     if (!nes_insertcart(filename))
     {
@@ -52,7 +51,30 @@ int nofrendo_start(const char *filename, int system, int sample_rate, bool stere
         return -2;
     }
 
-    nes_emulate();
+    if (savefile && state_load(savefile) < 0)
+    {
+        nes_reset(true);
+    }
+
+    while (!nes->poweroff)
+    {
+        nes_emulate(true);
+    }
 
     return 0;
+}
+
+void nofrendo_stop(void)
+{
+    nes_poweroff();
+    nes_shutdown();
+}
+
+void nofrendo_log(int type, const char *format, ...)
+{
+    // TO DO: call osd_log if available
+    va_list arg;
+    va_start(arg, format);
+    vprintf(format, arg);
+    va_end(arg);
 }

@@ -73,7 +73,7 @@ static void rom_loadsram(void)
 #endif
 
 /* Load a ROM from a memory buffer */
-rom_t *rom_loadmem(uint8 *data, size_t size)
+rom_t *rom_loadmem(uint8_t *data, size_t size)
 {
    if (!data || size < 16)
       return NULL;
@@ -232,7 +232,7 @@ rom_t *rom_loadmem(uint8 *data, size_t size)
 /* Load a ROM from file */
 rom_t *rom_loadfile(const char *filename)
 {
-   uint8 *data = NULL;
+   uint8_t *data = NULL;
    long size = 0;
 
    if (!filename)

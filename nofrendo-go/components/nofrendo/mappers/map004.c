@@ -26,14 +26,14 @@
 
 static struct
 {
-   uint8 counter;
-   uint8 latch;
-   uint8 enabled;
+   uint8_t counter;
+   uint8_t latch;
+   uint8_t enabled;
 } irq;
 
-static uint8 reg;
-static uint8 reg8000;
-static uint16 vrombase;
+static uint8_t reg;
+static uint8_t reg8000;
+static uint vrombase;
 static bool fourscreen;
 
 // Shouldn't that be packed? (It wasn't packed in SNSS...)
@@ -46,7 +46,7 @@ typedef struct
 } mapper4Data;
 
 
-static void map4_write(uint32 address, uint8 value)
+static void map4_write(uint32_t address, uint8_t value)
 {
    switch (address & 0xE001)
    {

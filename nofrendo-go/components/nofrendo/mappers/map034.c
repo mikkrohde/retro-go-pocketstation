@@ -32,7 +32,7 @@ static void map34_init(rom_t *cart)
    mmc_bankrom(32, 0x8000, MMC_LASTBANK);
 }
 
-static void map34_write(uint32 address, uint8 value)
+static void map34_write(uint32_t address, uint8_t value)
 {
    if ((address & 0x8000) || (0x7FFD == address))
    {

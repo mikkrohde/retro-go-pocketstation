@@ -26,9 +26,9 @@
 
 static struct
 {
-   uint16 counter;
-   uint16 cycles;
-   uint8 low, high;
+   uint16_t counter;
+   uint16_t cycles;
+   uint8_t low, high;
    bool enabled;
 } irq;
 
@@ -45,7 +45,7 @@ static void map65_init(rom_t *cart)
 
 /* TODO: shouldn't there be some kind of HBlank callback??? */
 
-static void map65_write(uint32 address, uint8 value)
+static void map65_write(uint32_t address, uint8_t value)
 {
    int range = address & 0xF000;
    int reg = address & 7;
@@ -72,13 +72,13 @@ static void map65_write(uint32 address, uint8 value)
       case 5:
          irq.high = value;
          irq.cycles = (irq.high << 8) | irq.low;
-         irq.counter = (uint8)(irq.cycles / 128);
+         irq.counter = (uint8_t)(irq.cycles / 128);
          break;
 
       case 6:
          irq.low = value;
          irq.cycles = (irq.high << 8) | irq.low;
-         irq.counter = (uint8)(irq.cycles / 128);
+         irq.counter = (uint8_t)(irq.cycles / 128);
          break;
 
       default:

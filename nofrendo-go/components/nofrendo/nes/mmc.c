@@ -32,7 +32,7 @@ static mapper_t mapper;
 static rom_t *cart;
 
 /* PRG-ROM/RAM bankswitching */
-void mmc_bankprg(int size, uint32 address, int bank, uint8 *base)
+void mmc_bankprg(int size, uint32_t address, int bank, uint8_t *base)
 {
    size_t banks = 16;
 
@@ -82,7 +82,7 @@ void mmc_bankprg(int size, uint32 address, int bank, uint8 *base)
 }
 
 /* CHR-ROM/RAM bankswitching */
-void mmc_bankchr(int size, uint32 address, int bank, uint8 *base)
+void mmc_bankchr(int size, uint32_t address, int bank, uint8_t *base)
 {
    size_t banks = 128;
 

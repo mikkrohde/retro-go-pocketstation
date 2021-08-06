@@ -43,12 +43,12 @@
 }
 
 #ifdef IS_LITTLE_ENDIAN
-   static inline uint16 swap16(uint16 x)
+   static inline uint16_t swap16(uint16_t x)
    {
       return (x << 8) | (x >> 8);
    }
 
-   static inline uint32 swap32(uint32 x)
+   static inline uint32_t swap32(uint32_t x)
    {
       return ((x>>24)&0xff) | ((x<<8)&0xff0000) | ((x>>8)&0xff00) | ((x<<24)&0xff000000);
    }
@@ -57,26 +57,14 @@
    #define swap32(x) (x)
 #endif
 
-static int save_slot = 0;
-
-
-/* Set the state-save slot to use (0 - 9) */
-void state_setslot(int slot)
-{
-   if (save_slot != slot && slot >= 0 && slot <= 9)
-   {
-      save_slot = slot;
-      MESSAGE_INFO("Save slot changed to %d\n", slot);
-   }
-}
 
 int state_save(const char* fn)
 {
-   uint8 buffer[512];
-   uint8 numberOfBlocks = 0;
+   uint8_t buffer[512];
+   uint8_t numberOfBlocks = 0;
    nes_t *machine;
    FILE *file;
-   uint16 i, temp;
+   uint16_t i, temp;
 
    /* get the pointer to our NES machine context */
    machine = nes_getptr();
@@ -106,8 +94,8 @@ int state_save(const char* fn)
    buffer[3] = machine->cpu->p_reg;
    buffer[4] = machine->cpu->s_reg;
    temp = swap16(machine->cpu->pc_reg);
-   buffer[5] = ((uint8*)&temp)[0];
-   buffer[6] = ((uint8*)&temp)[1];
+   buffer[5] = ((uint8_t*)&temp)[0];
+   buffer[6] = ((uint8_t*)&temp)[1];
    buffer[7] = machine->ppu->ctrl0;
    buffer[8] = machine->ppu->ctrl1;
 
@@ -128,8 +116,8 @@ int state_save(const char* fn)
    buffer[34] = machine->ppu->nt3;
    buffer[35] = machine->ppu->nt4;
    temp = swap16(machine->ppu->vaddr);
-   buffer[36] = ((uint8*)&temp)[0];
-   buffer[37] = ((uint8*)&temp)[1];
+   buffer[36] = ((uint8_t*)&temp)[0];
+   buffer[37] = ((uint8_t*)&temp)[1];
    buffer[38] = machine->ppu->oam_addr;
    buffer[39] = machine->ppu->tile_xofs;
 
@@ -207,15 +195,15 @@ int state_save(const char* fn)
       _fwrite("MPRD\x00\x00\x00\x01\x00\x00\x00\x98", 12);
       numberOfBlocks++;
 
-      uint8 state[0x80];
-      uint16 temp;
+      uint8_t state[0x80];
+      uint16_t temp;
 
       /* TODO: snss spec should be updated, using 4kB ROM pages.. */
       for (i = 0; i < 4; i++)
       {
          temp = swap16((mem_getpage((i + 4) * 4) - machine->cart->prg_rom) >> 13);
-         buffer[(i * 2) + 0] = ((uint8 *) &temp)[0];
-         buffer[(i * 2) + 1] = ((uint8 *) &temp)[1];
+         buffer[(i * 2) + 0] = ((uint8_t *) &temp)[0];
+         buffer[(i * 2) + 1] = ((uint8_t *) &temp)[1];
       }
 
       for (i = 0; i < 8; i++)
@@ -223,8 +211,8 @@ int state_save(const char* fn)
          temp = (machine->cart->chr_rom_banks) ?
             ((ppu_getpage(i) - machine->cart->chr_rom + (i * 0x400)) >> 10) : (i);
          temp = swap16(temp);
-         buffer[8 + (i * 2) + 0] = ((uint8 *) &temp)[0];
-         buffer[8 + (i * 2) + 1] = ((uint8 *) &temp)[1];
+         buffer[8 + (i * 2) + 0] = ((uint8_t *) &temp)[0];
+         buffer[8 + (i * 2) + 1] = ((uint8_t *) &temp)[1];
       }
 
       if (machine->mapper->get_state)
@@ -245,7 +233,7 @@ int state_save(const char* fn)
 
    fclose(file);
 
-   MESSAGE_INFO("state_save: Game %d saved!\n", save_slot);
+   MESSAGE_INFO("state_save: Game saved!\n");
 
    return 0;
 
@@ -257,15 +245,15 @@ _error:
 
 int state_load(const char* fn)
 {
-   uint8 buffer[512];
+   uint8_t buffer[512];
    FILE *file;
    nes_t *machine;
    int blk, i;
 
-   uint32 numberOfBlocks;
-   uint32 blockVersion;
-   uint32 blockLength;
-   uint32 nextBlock = 8;
+   uint32_t numberOfBlocks;
+   uint32_t blockVersion;
+   uint32_t blockLength;
+   uint32_t nextBlock = 8;
 
    machine = nes_getptr();
 
@@ -283,7 +271,7 @@ int state_load(const char* fn)
       goto _error;
    }
 
-   numberOfBlocks = swap32(*((uint32*)&buffer[4]));
+   numberOfBlocks = swap32(*((uint32_t*)&buffer[4]));
 
    MESSAGE_INFO("state_load: file '%s' opened, blocks=%d.\n", fn, numberOfBlocks);
 
@@ -292,8 +280,8 @@ int state_load(const char* fn)
       fseek(file, nextBlock, SEEK_SET);
       _fread(buffer, 12);
 
-      blockVersion = swap32(*((uint32*)&buffer[4]));
-      blockLength = swap32(*((uint32*)&buffer[8]));
+      blockVersion = swap32(*((uint32_t*)&buffer[4]));
+      blockLength = swap32(*((uint32_t*)&buffer[8]));
 
       UNUSED(blockVersion);
 
@@ -312,7 +300,7 @@ int state_load(const char* fn)
          machine->cpu->y_reg = buffer[0x2];
          machine->cpu->p_reg = buffer[0x3];
          machine->cpu->s_reg = buffer[0x4];
-         machine->cpu->pc_reg = swap16(*((uint16*)&buffer[0x5]));
+         machine->cpu->pc_reg = swap16(*((uint16_t*)&buffer[0x5]));
          machine->ppu->ctrl0 = buffer[0x7];
          machine->ppu->ctrl1 = buffer[0x8];
 
@@ -327,7 +315,7 @@ int state_load(const char* fn)
 
          _fread(buffer, 8);
 
-         machine->ppu->vaddr = swap16(*((uint16*)&buffer[0x4]));
+         machine->ppu->vaddr = swap16(*((uint16_t*)&buffer[0x4]));
          machine->ppu->oam_addr = buffer[0x6];
          machine->ppu->tile_xofs = buffer[0x7];
 
@@ -385,12 +373,12 @@ int state_load(const char* fn)
          _fread(buffer, blockLength);
 
          for (i = 0; i < 4; i++)
-            mmc_bankrom(8, 0x8000 + (i * 0x2000), swap16(((uint16*)buffer)[i]));
+            mmc_bankrom(8, 0x8000 + (i * 0x2000), swap16(((uint16_t*)buffer)[i]));
 
          if (machine->cart->chr_rom_banks)
          {
             for (i = 0; i < 8; i++)
-               mmc_bankvrom(1, i * 0x400, swap16(((uint16*)buffer)[4 + i]));
+               mmc_bankvrom(1, i * 0x400, swap16(((uint16_t*)buffer)[4 + i]));
          }
          else if (machine->cart->chr_ram)
          {
@@ -429,7 +417,7 @@ int state_load(const char* fn)
    /* close file, we're done */
    fclose(file);
 
-   MESSAGE_INFO("state_load: Game %d restored\n", save_slot);
+   MESSAGE_INFO("state_load: Game restored\n");
 
    return 0;
 

@@ -24,11 +24,11 @@
 #include <nofrendo.h>
 #include <mmc.h>
 
-static uint8 latch[2];
-static uint8 hibits;
+static uint8_t latch[2];
+static uint8_t hibits;
 
 
-static void map75_write(uint32 address, uint8 value)
+static void map75_write(uint32_t address, uint8_t value)
 {
    switch ((address & 0xF000) >> 12)
    {

@@ -24,10 +24,10 @@
 #include <nofrendo.h>
 #include <mmc.h>
 
-static void map15_write(uint32 address, uint8 value)
+static void map15_write(uint32_t address, uint8_t value)
 {
    int bank = value & 0x3F;
-   uint8 swap = (value & 0x80) >> 7;
+   uint8_t swap = (value & 0x80) >> 7;
 
    switch (address & 0x3)
    {

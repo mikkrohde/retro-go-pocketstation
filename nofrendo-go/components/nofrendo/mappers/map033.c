@@ -25,7 +25,7 @@
 #include <mmc.h>
 
 
-static void map33_write(uint32 address, uint8 value)
+static void map33_write(uint32_t address, uint8_t value)
 {
    int page = (address >> 13) & 3;
    int reg = address & 3;

@@ -26,8 +26,8 @@
 #include <mmc.h>
 #include <nes.h>
 
-static uint8 register_low;
-static uint8 register_high;
+static uint8_t register_low;
+static uint8_t register_high;
 
 /*****************************************************/
 /* Set 8K CHR bank from the combined register values */
@@ -56,7 +56,7 @@ static void map41_init(rom_t *cart)
 /******************************************/
 /* Mapper #41 write handler ($6000-$67FF) */
 /******************************************/
-static void map41_low_write(uint32 address, uint8 value)
+static void map41_low_write(uint32_t address, uint8_t value)
 {
    /* Within this range the value written is irrelevant */
    UNUSED(value);
@@ -65,7 +65,7 @@ static void map41_low_write(uint32 address, uint8 value)
    /*              A4-A3 = high two bits of 8K CHR bank              */
    /*              A2    = register 1 enable (0=disabled, 1=enabled) */
    /*              A2-A0 = 32K PRG bank                              */
-   register_low = (uint8) (address & 0x3F);
+   register_low = (uint8_t) (address & 0x3F);
    mmc_bankrom(32, 0x8000, register_low & 0x07);
    map41_set_chr();
    if (register_low & 0x20) ppu_setmirroring(PPU_MIRROR_HORI);
@@ -75,7 +75,7 @@ static void map41_low_write(uint32 address, uint8 value)
 /******************************************/
 /* Mapper #41 write handler ($8000-$FFFF) */
 /******************************************/
-static void map41_high_write(uint32 address, uint8 value)
+static void map41_high_write(uint32_t address, uint8_t value)
 {
    /* Address doesn't matter within this range */
    UNUSED(address);

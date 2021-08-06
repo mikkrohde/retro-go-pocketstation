@@ -54,10 +54,12 @@
 
 typedef enum
 {
-    SYS_UNKNOWN,
-    SYS_NES_NTSC,
-    SYS_NES_PAL,
-    SYS_FAMICOM,
+    SYS_UNKNOWN = 0,
+    SYS_NES_NTSC = 1,
+    SYS_NES_PAL = 2,
+    SYS_FAMICOM = 3,
+
+    SYS_DETECT = 0,
 } system_t;
 
 typedef void (nes_timer_t)(int cycles);
@@ -73,8 +75,8 @@ typedef struct
     mapper_t *mapper;
 
     /* Video buffer */
-    uint8 *framebuffers[2];
-    uint8 *vidbuf;
+    uint8_t *framebuffers[2];
+    uint8_t *vidbuf;
 
     /* Misc */
     system_t system;
@@ -96,10 +98,8 @@ typedef struct
     long timer_period;
 
     /* Control */
-    bool autoframeskip;
+    bool frameskip;
     bool poweroff;
-    bool pause;
-    bool drawframe;
 
 } nes_t;
 
@@ -109,9 +109,8 @@ extern void nes_shutdown(void);
 extern rom_t *nes_insertcart(const char *filename);
 extern rom_t *nes_insertdisk(const char *filename);
 extern void nes_settimer(nes_timer_t *func, long period);
-extern void nes_emulate(void);
+extern void nes_emulate(bool draw);
 extern void nes_reset(bool hard_reset);
 extern void nes_poweroff(void);
-extern void nes_togglepause(void);
 
 #endif /* _NES_H_ */

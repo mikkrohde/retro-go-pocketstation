@@ -27,7 +27,7 @@
 #include <nes.h>
 
 
-static void map193_reg_write(uint32 address, uint8 value)
+static void map193_reg_write(uint32_t address, uint8_t value)
 {
    switch (address & 0x03)
    {

@@ -26,10 +26,10 @@
 #include <mmc.h>
 #include <nes.h>
 
-static uint8 prg_low_bank;
-static uint8 chr_low_bank;
-static uint8 prg_high_bank;
-static uint8 chr_high_bank;
+static uint8_t prg_low_bank;
+static uint8_t chr_low_bank;
+static uint8_t prg_high_bank;
+static uint8_t chr_high_bank;
 
 /*************************************************/
 /* Set banks from the combined register values   */
@@ -57,7 +57,7 @@ static void map46_init(rom_t *cart)
 /******************************************/
 /* Mapper #46 write handler ($6000-$FFFF) */
 /******************************************/
-static void map46_write(uint32 address, uint8 value)
+static void map46_write(uint32_t address, uint8_t value)
 {
    /* $8000-$FFFF: D6-D4 = lower three bits of CHR bank */
    /*              D0    = low bit of PRG bank          */

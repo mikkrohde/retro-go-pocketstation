@@ -26,17 +26,17 @@
 #include <mmc.h>
 #include <nes.h>
 
-static uint8 reg5000;
-static uint8 reg5100;
-static uint8 reg5101;
-static uint8 reg5200;
-static uint8 reg5300;
-static uint8 trigger;
+static uint8_t reg5000;
+static uint8_t reg5100;
+static uint8_t reg5101;
+static uint8_t reg5200;
+static uint8_t reg5300;
+static uint8_t trigger;
 
 
 static void map162_sync()
 {
-   uint8 bank = (reg5200 & 0x3) << 4 | (reg5000 & 0xF);
+   uint8_t bank = (reg5200 & 0x3) << 4 | (reg5000 & 0xF);
    mmc_bankrom(32, 0x8000, bank);
    // mmc_bankvrom(8, 0x0000, 0);
 }
@@ -73,7 +73,7 @@ static void map162_hblank(int scanline)
    }
 }
 
-static uint8 map162_reg_read(uint32 address)
+static uint8_t map162_reg_read(uint32_t address)
 {
    switch (address & 0x7300)
    {
@@ -89,7 +89,7 @@ static uint8 map162_reg_read(uint32 address)
    }
 }
 
-static void map162_reg_write(uint32 address, uint8 value)
+static void map162_reg_write(uint32_t address, uint8_t value)
 {
    switch (address & 0x7300)
    {

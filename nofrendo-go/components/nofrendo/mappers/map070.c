@@ -30,7 +30,7 @@ static bool fourscreen;
 /* ($8000-$FFFF) D6-D4 = switch $8000-$BFFF */
 /* ($8000-$FFFF) D3-D0 = switch PPU $0000-$1FFF */
 /* ($8000-$FFFF) D7 = switch mirroring */
-static void map70_write(uint32 address, uint8 value)
+static void map70_write(uint32_t address, uint8_t value)
 {
    UNUSED(address);
 

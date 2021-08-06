@@ -61,46 +61,43 @@
 
 typedef struct
 {
-   uint8 regs[4];
+   uint8_t regs[4];
 
    bool enabled;
 
    float accum;
-   int32 freq;
-   int32 output_vol;
+   int freq;
+   int output_vol;
    bool fixed_envelope;
    bool holdnote;
-   uint8 volume;
+   uint volume;
 
-   int32 sweep_phase;
-   int32 sweep_delay;
+   int sweep_phase;
+   int sweep_delay;
    bool sweep_on;
-   uint8 sweep_shifts;
-   uint8 sweep_length;
+   uint sweep_shifts;
    bool sweep_inc;
 
    /* this may not be necessary in the future */
-   int32 freq_limit;
-   int32 env_phase;
-   int32 env_delay;
-   uint8 env_vol;
+   int freq_limit;
+   int env_phase;
+   int env_delay;
+   uint env_vol;
 
    int vbl_length;
-   uint8 adder;
+   int adder;
    int duty_flip;
 } rectangle_t;
 
 typedef struct
 {
-   uint8 regs[3];
+   uint8_t regs[3];
 
    bool enabled;
 
    float accum;
-   int32 freq;
-   int32 output_vol;
-
-   uint8 adder;
+   int freq;
+   int output_vol;
 
    bool holdnote;
    bool counter_started;
@@ -108,49 +105,50 @@ typedef struct
    int write_latency;
 
    int vbl_length;
+   int adder;
    int linear_length;
 } triangle_t;
 
 
 typedef struct
 {
-   uint8 regs[3];
+   uint8_t regs[3];
 
    bool enabled;
 
    float accum;
-   int32 freq;
-   int32 output_vol;
+   int freq;
+   int output_vol;
 
-   int32 env_phase;
-   int32 env_delay;
-   uint8 env_vol;
+   int env_phase;
+   int env_delay;
+   uint env_vol;
    bool fixed_envelope;
    bool holdnote;
 
-   uint8 volume;
-   uint8 xor_tap;
-   uint16 shift_reg;
+   uint8_t volume;
+   uint8_t xor_tap;
+   uint16_t shift_reg;
 
    int vbl_length;
 } noise_t;
 
 typedef struct
 {
-   uint8 regs[4];
+   uint8_t regs[4];
 
    /* bodge for timestamp queue */
    bool enabled;
 
    float accum;
-   int32 freq;
-   int32 output_vol;
+   int freq;
+   int output_vol;
 
-   uint32 address;
-   uint32 cached_addr;
-   int dma_length;
-   int cached_dmalength;
-   uint8 cur_byte;
+   uint address;
+   uint cached_addr;
+   uint dma_length;
+   uint cached_dmalength;
+   uint cur_byte;
 
    bool looping;
    bool irq_gen;
@@ -171,7 +169,7 @@ typedef struct
    int   (*init)(void);
    void  (*shutdown)(void);
    void  (*reset)(void);
-   int32 (*process)(void);
+   int   (*process)(void);
 } apuext_t;
 
 typedef enum
@@ -191,30 +189,30 @@ typedef struct
    triangle_t triangle;
    noise_t noise;
    dmc_t dmc;
-   uint8 control_reg;
+   uint8_t control_reg;
 
-   int32 prev_sample;
+   int prev_sample;
 
-   uint32 samples_per_frame;
-   uint32 sample_rate;
+   uint samples_per_frame;
+   uint sample_rate;
    bool stereo;
 
-   int16 buffer[APU_SAMPLES_PER_FRAME];
+   short buffer[APU_SAMPLES_PER_FRAME];
 
    float cycle_rate;
 
    struct {
-      uint8 state;
-      uint32 step;
-      uint32 cycles;
+      uint state;
+      uint step;
+      uint cycles;
       bool irq_occurred;
       bool disable_irq;
    } fc;
 
    /* look up table madness */
-   int32 decay_lut[16];
-   int32 vbl_lut[32];
-   int32 trilength_lut[128];
+   int decay_lut[16];
+   int vbl_lut[32];
+   int trilength_lut[128];
 
    /* external sound chip */
    apuext_t *ext;
@@ -238,10 +236,10 @@ extern int  apu_getopt(apu_option_t n);
 extern void apu_setcontext(apu_t *src_apu);
 extern void apu_getcontext(apu_t *dest_apu);
 
-extern void apu_process(int16 *buffer, size_t num_samples, bool stereo);
+extern void apu_process(short *buffer, size_t num_samples, bool stereo);
 extern void apu_fc_advance(int cycles);
 
-extern uint8 apu_read(uint32 address);
-extern void apu_write(uint32 address, uint8 value);
+extern uint8_t apu_read(uint32_t address);
+extern void apu_write(uint32_t address, uint8_t value);
 
 #endif /* _NES_APU_H_ */

@@ -67,8 +67,8 @@
 #define  PPU_PAL_COUNT        6
 
 /* Some mappers need to hook into the PPU's internals */
-typedef void (*ppu_latchfunc_t)(uint32 address, uint8 value);
-typedef uint8 (*ppu_vreadfunc_t)(uint32 address, uint8 value);
+typedef void (*ppu_latchfunc_t)(uint32_t address, uint8_t value);
+typedef uint8_t (*ppu_vreadfunc_t)(uint32_t address, uint8_t value);
 
 typedef enum
 {
@@ -90,41 +90,47 @@ typedef enum
 
 typedef struct
 {
-   uint8 y_loc;
-   uint8 tile;
-   uint8 attr;
-   uint8 x_loc;
+    uint8_t r, g, b;
+} ppu_rgb_t;
+
+typedef struct
+{
+   uint8_t y_loc;
+   uint8_t tile;
+   uint8_t attr;
+   uint8_t x_loc;
 } ppu_obj_t;
 
 typedef struct
 {
    /* The NES has only 2 nametables, but we allocate 4 for mappers to use */
-   uint8 nametab[0x400 * 4];
+   uint8_t nametab[0x400 * 4];
 
    /* Sprite memory */
-   uint8 oam[256];
+   uint8_t oam[256];
 
    /* Internal palette */
-   uint8 palette[32];
+   uint8_t palette[32];
 
    /* VRAM (CHR RAM/ROM) paging */
-   uint8 *page[16];
+   uint8_t *page[16];
 
    /* Framebuffer palette */
-   rgb_t curpal[256];
+   ppu_rgb_t curpal[256];
+   bool curpal_dirty;
 
    /* Hardware registers */
-   uint8 ctrl0, ctrl1, stat, oam_addr, nametab_base;
-   uint8 latch, vdata_latch, tile_xofs, flipflop;
-   int32 vaddr, vaddr_latch, vaddr_inc;
-   uint8 nt1, nt2, nt3, nt4;
+   uint8_t ctrl0, ctrl1, stat, oam_addr, nametab_base;
+   uint8_t latch, vdata_latch, tile_xofs, flipflop;
+   uint  vaddr, vaddr_latch, vaddr_inc;
+   uint nt1, nt2, nt3, nt4;
 
-   int32 obj_height, obj_base, bg_base;
+   uint obj_height, obj_base, bg_base;
    bool left_bg_on, left_obj_on;
    bool bg_on, obj_on;
 
    bool strikeflag;
-   uint32 strike_cycle;
+   uint strike_cycle;
 
    int scanline;
    int last_scanline;
@@ -146,15 +152,15 @@ typedef struct
 typedef struct
 {
    char  name[16];
-   uint8 data[192]; // rgb_t
+   uint8_t data[192];
 } palette_t;
 
 /* Mirroring / Paging */
-extern void ppu_setpage(int size, int page_num, uint8 *location);
+extern void ppu_setpage(int size, int page_num, uint8_t *location);
 extern void ppu_setnametables(int nt1, int nt2, int nt3, int nt4);
 extern void ppu_setmirroring(ppu_mirror_t type);
-extern uint8 *ppu_getpage(int page_num);
-extern uint8 *ppu_getnametable(int nt);
+extern uint8_t *ppu_getpage(int page_num);
+extern uint8_t *ppu_getnametable(int nt);
 
 /* Control */
 extern ppu_t *ppu_init(void);
@@ -173,18 +179,18 @@ extern void ppu_getcontext(ppu_t *dest_ppu);
 extern void ppu_setcontext(ppu_t *src_ppu);
 
 /* IO */
-extern uint8 ppu_read(uint32 address);
-extern void ppu_write(uint32 address, uint8 value);
+extern uint8_t ppu_read(uint32_t address);
+extern void ppu_write(uint32_t address, uint8_t value);
 
 /* Rendering */
-extern void ppu_scanline(uint8 *bmp, int scanline, bool draw_flag);
+extern void ppu_scanline(uint8_t *bmp, int scanline, bool draw_flag);
 extern void ppu_endscanline(void);
-extern void ppu_setpalette(rgb_t *pal);
+extern void ppu_setpalette(ppu_rgb_t *pal);
 extern const palette_t *ppu_getpalette(int n);
 
 /* Debugging */
-extern void ppu_dumppattern(uint8 *bmp, int table_num, int x_loc, int y_loc, int col);
-extern void ppu_dumpoam(uint8 *bmp, int x_loc, int y_loc);
+extern void ppu_dumppattern(uint8_t *bmp, int table_num, int x_loc, int y_loc, int col);
+extern void ppu_dumpoam(uint8_t *bmp, int x_loc, int y_loc);
 
 /* PPU debug drawing */
 #define  GUI_FIRSTENTRY 192

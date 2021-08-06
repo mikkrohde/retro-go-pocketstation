@@ -33,10 +33,10 @@ static struct
 } irq;
 
 
-static void map85_write(uint32 address, uint8 value)
+static void map85_write(uint32_t address, uint8_t value)
 {
-   uint8 bank = address >> 12;
-   uint8 reg = (address & 0x10) | ((address & 0x08) << 1);
+   uint8_t bank = address >> 12;
+   uint8_t reg = (address & 0x10) | ((address & 0x08) << 1);
 
    switch (bank)
    {

@@ -29,7 +29,7 @@
 static struct
 {
    bool enabled;
-   uint32 counter;
+   uint32_t counter;
 } irq;
 
 
@@ -68,21 +68,21 @@ static void map73_hblank(int scanline)
 /******************************************/
 /* Mapper #73 write handler ($8000-$FFFF) */
 /******************************************/
-static void map73_write(uint32 address, uint8 value)
+static void map73_write(uint32_t address, uint8_t value)
 {
    switch (address & 0xF000)
    {
       case 0x8000: irq.counter &= 0xFFF0;
-                   irq.counter |= (uint32) (value);
+                   irq.counter |= (uint32_t) (value);
                    break;
       case 0x9000: irq.counter &= 0xFF0F;
-                   irq.counter |= (uint32) (value << 4);
+                   irq.counter |= (uint32_t) (value << 4);
                    break;
       case 0xA000: irq.counter &= 0xF0FF;
-                   irq.counter |= (uint32) (value << 8);
+                   irq.counter |= (uint32_t) (value << 8);
                    break;
       case 0xB000: irq.counter &= 0x0FFF;
-                   irq.counter |= (uint32) (value << 12);
+                   irq.counter |= (uint32_t) (value << 12);
                    break;
       case 0xC000: irq.enabled = (value & 0x02);
                    break;

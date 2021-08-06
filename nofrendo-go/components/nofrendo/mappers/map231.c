@@ -32,7 +32,7 @@ static void map231_init(rom_t *cart)
    mmc_bankrom(32, 0x8000, MMC_LASTBANK);
 }
 
-static void map231_write(uint32 address, uint8 value)
+static void map231_write(uint32_t address, uint8_t value)
 {
    UNUSED(address);
 

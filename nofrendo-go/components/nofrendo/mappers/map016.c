@@ -50,7 +50,7 @@ static void map16_init(rom_t *cart)
    irq.enabled = false;
 }
 
-static void map16_write(uint32 address, uint8 value)
+static void map16_write(uint32_t address, uint8_t value)
 {
    int reg = address & 0xF;
 

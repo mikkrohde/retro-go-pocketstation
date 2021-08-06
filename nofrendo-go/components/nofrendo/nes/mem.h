@@ -33,12 +33,12 @@
 #define MEM_RAMSIZE   0x800
 
 // This is kind of a hack, but for speed...
-#define MEM_PAGE_USE_HANDLERS ((uint8*)1)
-#define MEM_PAGE_READ_ONLY    ((uint8*)2)
-#define MEM_PAGE_WRITE_ONLY   ((uint8*)3)
+#define MEM_PAGE_USE_HANDLERS ((uint8_t*)1)
+#define MEM_PAGE_READ_ONLY    ((uint8_t*)2)
+#define MEM_PAGE_WRITE_ONLY   ((uint8_t*)3)
 
 #define MEM_PAGE_HAS_HANDLERS(page) ((page) == MEM_PAGE_USE_HANDLERS)
-#define MEM_PAGE_IS_VALID_PTR(page) ((page) > ((uint8*)100))
+#define MEM_PAGE_IS_VALID_PTR(page) ((page) > ((uint8_t*)100))
 
 #define MEM_HANDLERS_MAX     32
 
@@ -46,27 +46,27 @@
 
 typedef struct
 {
-   uint32 min_range, max_range;
-   uint8 (*read_func)(uint32 address);
+   uint32_t min_range, max_range;
+   uint8_t (*read_func)(uint32_t address);
 } mem_read_handler_t;
 
 typedef struct
 {
-   uint32 min_range, max_range;
-   void (*write_func)(uint32 address, uint8 value);
+   uint32_t min_range, max_range;
+   void (*write_func)(uint32_t address, uint8_t value);
 } mem_write_handler_t;
 
 typedef struct
 {
    // System RAM
-   uint8 ram[MEM_RAMSIZE];
+   uint8_t ram[MEM_RAMSIZE];
 
    /* Plain memory (RAM/ROM) pages */
-   uint8 *pages[MEM_PAGECOUNT];
+   uint8_t *pages[MEM_PAGECOUNT];
 
    /* Mostly for nes6502 fastmem functions */
-   uint8 *pages_read[MEM_PAGECOUNT];
-   uint8 *pages_write[MEM_PAGECOUNT];
+   uint8_t *pages_read[MEM_PAGECOUNT];
+   uint8_t *pages_write[MEM_PAGECOUNT];
 
    /* Special memory handlers */
    mem_read_handler_t read_handlers[MEM_HANDLERS_MAX];
@@ -76,11 +76,11 @@ typedef struct
 extern mem_t *mem_create(void);
 extern void mem_shutdown(void);
 extern void mem_reset(void);
-extern void mem_setpage(uint32 page, uint8 *ptr);
-extern uint8 *mem_getpage(uint32 page);
+extern void mem_setpage(uint32_t page, uint8_t *ptr);
+extern uint8_t *mem_getpage(uint32_t page);
 
-extern uint8 mem_getbyte(uint32 address);
-extern uint32 mem_getword(uint32 address);
-extern void mem_putbyte(uint32 address, uint8 value);
+extern uint8_t mem_getbyte(uint32_t address);
+extern uint32_t mem_getword(uint32_t address); // uint16_t
+extern void mem_putbyte(uint32_t address, uint8_t value);
 
 #endif

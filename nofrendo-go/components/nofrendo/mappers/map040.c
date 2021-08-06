@@ -37,7 +37,7 @@ typedef struct
 static struct
 {
    bool  enabled;
-   uint8 counter;
+   uint8_t counter;
 } irq;
 
 
@@ -68,7 +68,7 @@ static void map40_hblank(int scanline)
    }
 }
 
-static void map40_write(uint32 address, uint8 value)
+static void map40_write(uint32_t address, uint8_t value)
 {
    int range = (address >> 13) - 4;
 

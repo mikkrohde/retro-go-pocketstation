@@ -27,15 +27,15 @@
 // Shouldn't that be packed? (It wasn't packed in SNSS...)
 typedef struct
 {
-   uint8 irqCounterLowByte;
-   uint8 irqCounterHighByte;
-   uint8 irqCounterEnabled;
+   uint8_t irqCounterLowByte;
+   uint8_t irqCounterHighByte;
+   uint8_t irqCounterEnabled;
 } mapper19Data;
 
 static struct
 {
-   uint16 counter;
-   uint16 enabled;
+   uint16_t counter;
+   uint16_t enabled;
 } irq;
 
 static rom_t *cart;
@@ -48,10 +48,10 @@ static void map19_init(rom_t *_cart)
    irq.enabled = 0;
 }
 
-static void map19_write(uint32 address, uint8 value)
+static void map19_write(uint32_t address, uint8_t value)
 {
    int reg = address >> 11;
-   uint8 *page;
+   uint8_t *page;
 
    switch (reg)
    {
@@ -106,7 +106,7 @@ static void map19_write(uint32 address, uint8 value)
    }
 }
 
-static uint8 map19_read(uint32 address)
+static uint8_t map19_read(uint32_t address)
 {
    int reg = address >> 11;
 

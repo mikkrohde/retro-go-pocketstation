@@ -28,8 +28,8 @@
 
 static struct
 {
-   uint16 enabled;
-   uint16 counter;
+   uint16_t enabled;
+   uint16_t counter;
 } irq;
 
 /********************************/
@@ -86,9 +86,9 @@ static void map50_hblank(int scanline)
 /******************************************/
 /* Mapper #50 write handler ($4000-$5FFF) */
 /******************************************/
-static void map50_write(uint32 address, uint8 value)
+static void map50_write(uint32_t address, uint8_t value)
 {
-   uint8 selectable_bank;
+   uint8_t selectable_bank;
 
    /* For address to be decoded, A5 must be high and A6 low */
    if ((address & 0x60) != 0x20) return;

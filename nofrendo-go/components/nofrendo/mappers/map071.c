@@ -33,7 +33,7 @@ static void map71_init(rom_t *cart)
    mmc_bankrom(16, 0x8000, 0);
 }
 
-static void map71_write(uint32 address, uint8 value)
+static void map71_write(uint32_t address, uint8_t value)
 {
    // SCR0/1 mirroring only used by Fire Hawk
    if ((address & 0xF000) == 0x9000)

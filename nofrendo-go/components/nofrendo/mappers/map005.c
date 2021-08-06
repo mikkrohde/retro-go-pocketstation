@@ -27,18 +27,18 @@
 #include <mmc.h>
 #include <nes.h>
 
-static uint8 prg_mode;
-static uint8 chr_mode;
-static uint8 nametable_mapping;
-static uint8 multiplication[2];
+static uint8_t prg_mode;
+static uint8_t chr_mode;
+static uint8_t nametable_mapping;
+static uint8_t multiplication[2];
 
-static uint16 prg_banks[4];
-static uint16 chr_banks[12];
-static uint16 chr_upper_bits;
-static uint16 chr_banks_count;
+static uint prg_banks[4];
+static uint chr_banks[12];
+static uint chr_upper_bits;
+static uint chr_banks_count;
 
-static int16 split_tile, split_tile_number, split_region;
-static int16 scanline;
+static int split_tile, split_tile_number, split_region;
+static int scanline;
 
 #define IN_FRAME    0x40
 #define IRQ_PENDING 0x80
@@ -48,38 +48,38 @@ static int16 scanline;
 
 static struct
 {
-   uint8 *data;
-   uint8 mode;
+   uint8_t *data;
+   uint8_t mode;
 } exram;
 
 static struct
 {
-   uint8 *data;
-   uint8 mode;
-   uint8 protect1;
-   uint8 protect2;
+   uint8_t *data;
+   uint8_t mode;
+   uint8_t protect1;
+   uint8_t protect2;
 } prgram;
 
 static struct
 {
-   uint8 enabled;
-   uint8 rightside;
-   uint8 delimiter;
-   uint8 scroll;
-   uint8 bank;
+   uint8_t enabled;
+   uint8_t rightside;
+   uint8_t delimiter;
+   uint8_t scroll;
+   uint8_t bank;
 } vert_split;
 
 static struct
 {
-   int16 scanline;
-   uint8 enabled;
-   uint8 status;
+   short scanline;
+   uint8_t enabled;
+   uint8_t status;
 } irq;
 
 static struct
 {
-   uint8 color;
-   uint8 tile;
+   uint8_t color;
+   uint8_t tile;
 } fill_mode;
 
 struct mapper5Data
@@ -88,7 +88,7 @@ struct mapper5Data
 };
 
 
-static void prg_setbank(int size, uint32 address, int bank)
+static void prg_setbank(int size, uint32_t address, int bank)
 {
    bool rom = (bank & 0x80);
 
@@ -168,7 +168,7 @@ INLINE void chr_switch(int reg, int value)
    }
 }
 
-INLINE void nametable_update(uint8 value)
+INLINE void nametable_update(uint8_t value)
 {
    nametable_mapping = value;
    ppu_setnametables(value & 3, (value >> 2) & 3, (value >> 4) & 3, value >> 6);
@@ -200,7 +200,7 @@ static void map5_hblank(int _scanline)
    }
 }
 
-static void map5_write(uint32 address, uint8 value)
+static void map5_write(uint32_t address, uint8_t value)
 {
    // MESSAGE_INFO("MMC5 write: $%02X to $%04X\n", value, address);
 
@@ -285,7 +285,7 @@ static void map5_write(uint32 address, uint8 value)
 
    case 0x5130:
       /* Upper CHR Bank bits */
-      chr_upper_bits = (uint16)(value & 3) << 8;
+      chr_upper_bits = (uint16_t)(value & 3) << 8;
       break;
 
    case 0x5200:
@@ -327,14 +327,14 @@ static void map5_write(uint32 address, uint8 value)
    }
 }
 
-static uint8 map5_read(uint32 address)
+static uint8_t map5_read(uint32_t address)
 {
    switch(address)
    {
    case 0x5204:
       /* Scanline IRQ Status */
       {
-         uint8 x = irq.status;
+         uint8_t x = irq.status;
          irq.status &= ~IRQ_PENDING;
          return x;
       }
@@ -353,7 +353,7 @@ static uint8 map5_read(uint32 address)
    }
 }
 
-static uint8 map5_vram_read(uint32 address, uint8 value)
+static uint8_t map5_vram_read(uint32_t address, uint8_t value)
 {
    bool is_nt_read = false, is_nt_attr_read = false;
 
@@ -381,7 +381,7 @@ static uint8 map5_vram_read(uint32 address, uint8 value)
          {
             if (is_nt_read)
             {
-               uint8 tile_number = (split_tile_number + 2) % 42;
+               uint8_t tile_number = (split_tile_number + 2) % 42;
                if (tile_number <= 32 && ((vert_split.rightside && tile_number >= vert_split.delimiter)
                      || (!vert_split.rightside && tile_number < vert_split.delimiter)))
                {
@@ -427,8 +427,8 @@ static uint8 map5_vram_read(uint32 address, uint8 value)
             if (_exAttrLastFetchCounter == 2)
             {
                // PPU palette fetch from expansion ram
-               uint8 value = exram.data[_exAttributeLastNametableFetch];
-               uint8 palette = (value & 0xC0) >> 6;
+               uint8_t value = exram.data[_exAttributeLastNametableFetch];
+               uint8_t palette = (value & 0xC0) >> 6;
 
                //"The pattern fetches ignore the standard CHR banking bits, and instead use the top two bits of $5130 and the bottom 6 bits from Expansion RAM to choose a 4KB bank to select the tile from."
                _exAttrSelectedChrBank = ((value & 0x3F) | (chr_upper_bits >> 2)) % (nes->mmc->chr_banks * 2);
@@ -451,12 +451,12 @@ static uint8 map5_vram_read(uint32 address, uint8 value)
    return value;
 }
 
-static uint8 map5_exram_read(uint32 address)
+static uint8_t map5_exram_read(uint32_t address)
 {
    return exram.data[address - 0x5C00];
 }
 
-static void map5_exram_write(uint32 address, uint8 value)
+static void map5_exram_write(uint32_t address, uint8_t value)
 {
    if (exram.mode != 3)
    {

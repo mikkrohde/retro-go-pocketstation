@@ -27,7 +27,7 @@
 static bool is_battletoads = 0;
 
 
-static void map7_write(uint32 address, uint8 value)
+static void map7_write(uint32_t address, uint8_t value)
 {
    mmc_bankrom(32, 0x8000, value & 0xF);
 

@@ -20,10 +20,8 @@ static gamepad_state_t *localJoystick = &joystick1;
 
 static bool overscan = true;
 static long autocrop = 0;
-static long region = 0;
-
 static bool fullFrame = 0;
-static long frameTime = 0;
+
 static nes_t *nes;
 
 static rg_app_desc_t *app;
@@ -31,14 +29,12 @@ static rg_app_desc_t *app;
 #ifdef ENABLE_NETPLAY
 static gamepad_state_t *remoteJoystick = &joystick2;
 static gamepad_state_t joystick2;
-
 static bool netplay = false;
 #endif
 
 static const char *SETTING_AUTOCROP = "autocrop";
 static const char *SETTING_OVERSCAN = "overscan";
 static const char *SETTING_PALETTE = "palette";
-static const char *SETTING_REGION = "region";
 static const char *SETTING_SPRITELIMIT = "spritelimit";
 // --- MAIN
 
@@ -62,6 +58,7 @@ static void netplay_handler(netplay_event_t event, void *arg)
             // displayScalingMode = RG_DISPLAY_SCALING_FILL;
             // displayFilterMode = RG_DISPLAY_FILTER_NONE;
             // forceVideoRefresh = true;
+            input_connect(INP_JOYPAD1);
             nes_reset(true);
         }
 
@@ -162,33 +159,11 @@ static dialog_return_t autocrop_update_cb(dialog_option_t *option, dialog_event_
     return RG_DIALOG_IGNORE;
 }
 
-static dialog_return_t region_update_cb(dialog_option_t *option, dialog_event_t event)
-{
-    int val = region;
-    int max = 2;
-
-    if (event == RG_DIALOG_PREV) val = val > 0 ? val - 1 : max;
-    if (event == RG_DIALOG_NEXT) val = val < max ? val + 1 : 0;
-
-    if (val != region)
-    {
-        rg_settings_set_app_int32(SETTING_REGION, region);
-        region = val;
-    }
-
-    if (val == SYS_UNKNOWN)  strcpy(option->value, "Auto");
-    if (val == SYS_NES_NTSC) strcpy(option->value, "NTSC");
-    if (val == SYS_NES_PAL)  strcpy(option->value, "PAL ");
-
-    return RG_DIALOG_IGNORE;
-}
-
 static dialog_return_t advanced_settings_cb(dialog_option_t *option, dialog_event_t event)
 {
     if (event == RG_DIALOG_ENTER)
     {
         dialog_option_t options[] = {
-            {1, "Region      ", "Auto ", 1, &region_update_cb},
             {2, "Overscan    ", "Auto ", 1, &overscan_update_cb},
             {3, "Crop sides  ", "Never", 1, &autocrop_update_cb},
             {4, "Sprite limit", "On   ", 1, &sprite_limit_cb},
@@ -220,91 +195,10 @@ static dialog_return_t palette_update_cb(dialog_option_t *option, dialog_event_t
 }
 
 
-void osd_loadstate()
-{
-    if (app->startAction == RG_START_ACTION_RESUME)
-    {
-        rg_emu_load_state(0);
-    }
-
-    ppu_setopt(PPU_LIMIT_SPRITES, rg_settings_get_app_int32(SETTING_SPRITELIMIT, 1));
-    ppu_setopt(PPU_PALETTE_RGB, rg_settings_get_app_int32(SETTING_PALETTE, 0));
-
-    frameTime = get_frame_time(nes->refresh_rate);
-
-    app->refreshRate = nes->refresh_rate;
-}
-
-void osd_log(int type, const char *format, ...)
-{
-    va_list arg;
-    va_start(arg, format);
-    vprintf(format, arg);
-    va_end(arg);
-}
-
-int osd_init()
-{
-    input_connect(INP_JOYPAD0);
-    input_connect(INP_JOYPAD1);
-    return 0;
-}
-
-void osd_shutdown()
-{
-    //
-}
-
-// We've reached vsync. We need to process audio and sleep if we ran too fast
-void osd_vsync()
-{
-    static int32_t skipFrames = 0;
-    static int64_t lastSyncTime = 0;
-
-    long elapsed = get_elapsed_time_since(lastSyncTime);
-
-    if (skipFrames == 0)
-    {
-        if (app->speedupEnabled)
-            skipFrames = app->speedupEnabled * 2;
-        else if (elapsed >= frameTime) // Frame took too long
-            skipFrames = 1;
-        else if (nes->drawframe && fullFrame) // This could be avoided when scaling != full
-            skipFrames = 1;
-    }
-    else if (skipFrames > 0)
-    {
-        skipFrames--;
-    }
-
-    // Tick before submitting audio/syncing
-    rg_system_tick(elapsed);
-
-    nes->drawframe = (skipFrames == 0);
-
-    // Use audio to throttle emulation
-    if (!app->speedupEnabled)
-    {
-        rg_audio_submit(nes->apu->buffer, nes->apu->samples_per_frame);
-    }
-
-    lastSyncTime = get_elapsed_time();
-}
-
 /*
 ** Video
 */
-void osd_setpalette(rgb_t *pal)
-{
-    for (int i = 0; i < 64; i++)
-    {
-        uint16_t c = (pal[i].b >> 3) + ((pal[i].g >> 2) << 5) + ((pal[i].r >> 3) << 11);
-        myPalette[i] = (c >> 8) | ((c & 0xff) << 8);
-    }
-    previousUpdate = NULL;
-}
-
-void osd_blitscreen(uint8 *bmp)
+void osd_blitscreen(uint8_t *bmp)
 {
     int crop_v = (overscan) ? nes->overscan : 0;
     int crop_h = (autocrop == 2) || (autocrop == 1 && nes->ppu->left_bg_counter > 210) ? 8 : 0;
@@ -315,6 +209,19 @@ void osd_blitscreen(uint8 *bmp)
     currentUpdate->width = NES_SCREEN_WIDTH - (crop_h * 2);
     currentUpdate->height = NES_SCREEN_HEIGHT - (crop_v * 2);
 
+    // Check if palette needs to be refreshed before we sent to update
+    if (nes->ppu->curpal_dirty)
+    {
+        ppu_rgb_t *pal = nes->ppu->curpal;
+        for (int i = 0; i < 64; i++)
+        {
+            uint16_t c = (pal[i].b >> 3) + ((pal[i].g >> 2) << 5) + ((pal[i].r >> 3) << 11);
+            myPalette[i] = (c >> 8) | ((c & 0xff) << 8);
+        }
+        nes->ppu->curpal_dirty = false;
+        previousUpdate = NULL;
+    }
+
     fullFrame = rg_display_queue_update(currentUpdate, previousUpdate) == RG_UPDATE_FULL;
 
     previousUpdate = currentUpdate;
@@ -323,7 +230,7 @@ void osd_blitscreen(uint8 *bmp)
 
 void osd_getinput(void)
 {
-    uint16 input = 0;
+    unsigned input = 0;
 
     *localJoystick = rg_input_read_gamepad();
 
@@ -390,11 +297,8 @@ void app_main(void)
 
     overscan = rg_settings_get_app_int32(SETTING_OVERSCAN, 1);
     autocrop = rg_settings_get_app_int32(SETTING_AUTOCROP, 0);
-    region = rg_settings_get_app_int32(SETTING_REGION, SYS_UNKNOWN);
 
-    osd_init();
-
-    nes = nes_init(region, AUDIO_SAMPLE_RATE, true);
+    nes = nes_init(SYS_DETECT, AUDIO_SAMPLE_RATE, true);
     if (!nes)
     {
         RG_PANIC("Init failed.");
@@ -405,7 +309,54 @@ void app_main(void)
         RG_PANIC("Unsupported ROM.");
     }
 
-    nes_emulate();
+    ppu_setopt(PPU_LIMIT_SPRITES, rg_settings_get_app_int32(SETTING_SPRITELIMIT, 1));
+    ppu_setopt(PPU_PALETTE_RGB, rg_settings_get_app_int32(SETTING_PALETTE, 0));
+    app->refreshRate = nes->refresh_rate;
+
+    nes_emulate(false);
+    nes_emulate(false);
+
+    if (app->startAction == RG_START_ACTION_RESUME)
+    {
+        rg_emu_load_state(0);
+    }
+
+    int frameTime = get_frame_time(nes->refresh_rate);
+    int skipFrames = 0;
+    int elapsed = 0;
+
+    while (true)
+    {
+        int64_t startTime = get_elapsed_time();
+        bool drawFrame = (skipFrames == 0);
+
+        nes_emulate(drawFrame);
+
+        elapsed = get_elapsed_time_since(startTime);
+
+        if (skipFrames == 0)
+        {
+            if (app->speedupEnabled)
+                skipFrames = app->speedupEnabled * 2;
+            else if (elapsed >= frameTime) // Frame took too long
+                skipFrames = 1;
+            else if (drawFrame && fullFrame) // This could be avoided when scaling != full
+                skipFrames = 1;
+        }
+        else if (skipFrames > 0)
+        {
+            skipFrames--;
+        }
+
+        // Tick before submitting audio/syncing
+        rg_system_tick(elapsed);
+
+        // Use audio to throttle emulation
+        if (!app->speedupEnabled)
+        {
+            rg_audio_submit(nes->apu->buffer, nes->apu->samples_per_frame);
+        }
+    }
 
     RG_PANIC("Nofrendo died!");
 }

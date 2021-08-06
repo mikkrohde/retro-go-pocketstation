@@ -25,8 +25,8 @@
 #include <mmc.h>
 #include <string.h>
 
-static uint8 latch[2];
-static uint8 regs[4];
+static uint8_t latch[2];
+static uint8_t regs[4];
 
 // Shouldn't that be packed? (It wasn't packed in SNSS...)
 typedef struct
@@ -40,7 +40,7 @@ typedef struct
 
 
 /* Used when tile $FD/$FE is accessed */
-static void mmc10_latchfunc(uint32 address, uint8 value)
+static void mmc10_latchfunc(uint32_t address, uint8_t value)
 {
    if (0xFD == value || 0xFE == value)
    {
@@ -63,7 +63,7 @@ static void mmc10_latchfunc(uint32 address, uint8 value)
 
 /* mapper 10: MMC4 */
 /* MMC4: Fire Emblem */
-static void map10_write(uint32 address, uint8 value)
+static void map10_write(uint32_t address, uint8_t value)
 {
    switch ((address & 0xF000) >> 12)
    {

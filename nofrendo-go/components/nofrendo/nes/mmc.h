@@ -62,7 +62,7 @@ struct mapper_s
 extern mapper_t *mmc_init(rom_t *cart);
 extern void mmc_shutdown(void);
 extern void mmc_reset(void);
-extern void mmc_bankprg(int size, uint32 address, int bank, uint8 *base);
-extern void mmc_bankchr(int size, uint32 address, int bank, uint8 *base);
+extern void mmc_bankprg(int size, uint32_t address, int bank, uint8_t *base);
+extern void mmc_bankchr(int size, uint32_t address, int bank, uint8_t *base);
 
 #endif /* _NES_MMC_H_ */

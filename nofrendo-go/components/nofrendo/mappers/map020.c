@@ -59,10 +59,10 @@ enum
 
 typedef struct
 {
-    uint8 *disk[8];
-    uint8 sides;
-    uint8 regs[8];
-    uint8 *block_ptr;
+    uint8_t *disk[8];
+    uint8_t sides;
+    uint8_t regs[8];
+    uint8_t *block_ptr;
     int block_type;
     int block_pos;
     int block_size;
@@ -118,10 +118,10 @@ static void fds_hblank(int scanline)
     fds_cpu_timer(NES_CYCLES_PER_SCANLINE);
 }
 
-static uint8 fds_read(uint32 address)
+static uint8_t fds_read(uint32_t address)
 {
     // MESSAGE_INFO("FDS read at %04X\n", address);
-    uint8 ret = 0;
+    uint8_t ret = 0;
 
     switch (address)
     {
@@ -159,7 +159,7 @@ static uint8 fds_read(uint32 address)
     }
 }
 
-static void fds_write(uint32 address, uint8 value)
+static void fds_write(uint32_t address, uint8_t value)
 {
     // MESSAGE_INFO("FDS write at %04X: %02X\n", address, value);
 
@@ -246,24 +246,24 @@ static void fds_write(uint32 address, uint8 value)
     fds->regs[address & 7] = value;
 }
 
-static uint8 fds_sound_read(uint32 address)
+static uint8_t fds_sound_read(uint32_t address)
 {
     MESSAGE_INFO("FDS sound read at %04X\n", address);
     return 0x00;
 }
 
-static void fds_sound_write(uint32 address, uint8 value)
+static void fds_sound_write(uint32_t address, uint8_t value)
 {
     MESSAGE_INFO("FDS sound write at %04X: %02X\n", address, value);
 }
 
-static uint8 fds_wave_read(uint32 address)
+static uint8_t fds_wave_read(uint32_t address)
 {
     MESSAGE_INFO("FDS wave read at %04X\n", address);
     return 0x00;
 }
 
-static void fds_wave_write(uint32 address, uint8 value)
+static void fds_wave_write(uint32_t address, uint8_t value)
 {
     MESSAGE_INFO("FDS wave write at %04X: %02X\n", address, value);
 }
@@ -292,7 +292,7 @@ void fds_init(rom_t *cart)
         fclose(fp);
     }
 
-    uint8 *disk_ptr = cart->data_ptr;
+    uint8_t *disk_ptr = cart->data_ptr;
 
     if (memcmp(disk_ptr, FDS_HEAD_MAGIC, 4) == 0)
     {

@@ -63,7 +63,7 @@ static void map24_hblank(int scanline)
    }
 }
 
-static void map24_write(uint32 address, uint8 value)
+static void map24_write(uint32_t address, uint8_t value)
 {
    switch (address & 0xF003)
    {

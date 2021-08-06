@@ -46,7 +46,7 @@ static mem_t *mem;
 */
 #define PAGE_CROSS_CHECK(addr, reg) \
 { \
-   if ((reg) > (uint8) (addr)) \
+   if ((reg) > (uint8_t) (addr)) \
       ADD_CYCLES(1); \
 }
 
@@ -229,7 +229,7 @@ static mem_t *mem;
 
 
 /* Stack push/pull */
-#define PUSH(value)             cpu.stack[S--] = (uint8) (value)
+#define PUSH(value)             cpu.stack[S--] = (uint8_t) (value)
 #define PULL()                  cpu.stack[++S]
 
 
@@ -279,10 +279,10 @@ static mem_t *mem;
    if (condition) \
    { \
       IMMEDIATE_BYTE(btemp); \
-      if (((int8) btemp + (PC & 0x00FF)) & 0x100) \
+      if (((int8_t) btemp + (PC & 0x00FF)) & 0x100) \
          ADD_CYCLES(1); \
       ADD_CYCLES(3); \
-      PC += (int8) btemp; \
+      PC += (int8_t) btemp; \
    } \
    else \
    { \
@@ -340,7 +340,7 @@ static mem_t *mem;
    temp = A + data + c_flag; \
    c_flag = (temp >> 8) & 1; \
    v_flag = ((~(A ^ data)) & (A ^ temp) & 0x80); \
-   A = (uint8) temp; \
+   A = (uint8_t) temp; \
    SET_NZ_FLAGS(A); \
    ADD_CYCLES(cycles); \
 }
@@ -506,7 +506,7 @@ static mem_t *mem;
 { \
    temp = (reg) - (value); \
    c_flag = ((temp & 0x100) >> 8) ^ 1; \
-   SET_NZ_FLAGS((uint8) temp); \
+   SET_NZ_FLAGS((uint8_t) temp); \
 }
 
 #define CMP(cycles, read_func) \
@@ -848,7 +848,7 @@ static mem_t *mem;
    temp = A - data - (c_flag ^ 1); \
    v_flag = (A ^ data) & (A ^ temp) & 0x80; \
    c_flag = ((temp >> 8) & 1) ^ 1; \
-   A = (uint8) temp; \
+   A = (uint8_t) temp; \
    SET_NZ_FLAGS(A); \
    ADD_CYCLES(cycles); \
 }
@@ -886,7 +886,7 @@ static mem_t *mem;
 #define SHA(cycles, read_func, write_func, addr) \
 { \
    read_func(addr); \
-   data = A & X & ((uint8) ((addr >> 8) + 1)); \
+   data = A & X & ((uint8_t) ((addr >> 8) + 1)); \
    write_func(addr, data); \
    ADD_CYCLES(cycles); \
 }
@@ -896,7 +896,7 @@ static mem_t *mem;
 { \
    read_func(addr); \
    S = A & X; \
-   data = S & ((uint8) ((addr >> 8) + 1)); \
+   data = S & ((uint8_t) ((addr >> 8) + 1)); \
    write_func(addr, data); \
    ADD_CYCLES(cycles); \
 }
@@ -905,7 +905,7 @@ static mem_t *mem;
 #define SHX(cycles, read_func, write_func, addr) \
 { \
    read_func(addr); \
-   data = X & ((uint8) ((addr >> 8) + 1)); \
+   data = X & ((uint8_t) ((addr >> 8) + 1)); \
    write_func(addr, data); \
    ADD_CYCLES(cycles); \
 }
@@ -914,7 +914,7 @@ static mem_t *mem;
 #define SHY(cycles, read_func, write_func, addr) \
 { \
    read_func(addr); \
-   data = Y & ((uint8) ((addr >> 8 ) + 1)); \
+   data = Y & ((uint8_t) ((addr >> 8 ) + 1)); \
    write_func(addr, data); \
    ADD_CYCLES(cycles); \
 }
@@ -1013,10 +1013,10 @@ static mem_t *mem;
 }
 
 #define DECLARE_LOCAL_REGS() \
-   uint32 PC; \
-   uint8 A, X, Y, S; \
-   uint8 n_flag, v_flag, b_flag; \
-   uint8 d_flag, i_flag, z_flag, c_flag;
+   uint32_t PC; \
+   uint8_t A, X, Y, S; \
+   uint8_t n_flag, v_flag, b_flag; \
+   uint8_t d_flag, i_flag, z_flag, c_flag;
 
 #define GET_GLOBAL_REGS() \
 { \
@@ -1043,7 +1043,7 @@ static mem_t *mem;
 */
 
 #define ZP_READBYTE(addr)          (cpu.zp[(addr)])
-#define ZP_WRITEBYTE(addr, value)  (cpu.zp[(addr)] = (uint8) (value))
+#define ZP_WRITEBYTE(addr, value)  (cpu.zp[(addr)] = (uint8_t) (value))
 #define ZP_READWORD(addr)          (PAGE_READWORD(cpu.zp, addr))
 
 /*
@@ -1051,7 +1051,7 @@ static mem_t *mem;
 */
 
 #ifdef IS_LITTLE_ENDIAN
-#define PAGE_READWORD(page, addr)  (*(uint16 *)((page) + (addr)))
+#define PAGE_READWORD(page, addr)  (*(uint16_t *)((page) + (addr)))
 #else
 #define PAGE_READWORD(page, addr)  (page[(addr) + 1] << 8 | page[(addr)])
 #endif
@@ -1066,9 +1066,9 @@ static mem_t *mem;
 
 #ifdef NES6502_FASTMEM
 
-#define fast_readbyte(a) ({uint16 _a = (a); mem->pages[_a >> MEM_PAGESHIFT][_a];})
-#define fast_readword(a) ({uint16 _a = (a); ((_a & MEM_PAGEMASK) != MEM_PAGEMASK) ? PAGE_READWORD(mem->pages[_a >> MEM_PAGESHIFT], _a) : mem_getword(_a);})
-#define writebyte(a, v)  {uint16 _a = (a), _v = (v); if (_a < 0x2000) mem->ram[_a & 0x7FF] = _v; else mem_putbyte(_a, _v);}
+#define fast_readbyte(a) ({uint16_t _a = (a); mem->pages[_a >> MEM_PAGESHIFT][_a];})
+#define fast_readword(a) ({uint16_t _a = (a); ((_a & MEM_PAGEMASK) != MEM_PAGEMASK) ? PAGE_READWORD(mem->pages[_a >> MEM_PAGESHIFT], _a) : mem_getword(_a);})
+#define writebyte(a, v)  {uint16_t _a = (a), _v = (v); if (_a < 0x2000) mem->ram[_a & 0x7FF] = _v; else mem_putbyte(_a, _v);}
 
 #else /* !NES6502_FASTMEM */
 
@@ -1121,7 +1121,7 @@ void nes6502_getcontext(nes6502_t *context)
 }
 
 /* get number of elapsed cycles */
-IRAM_ATTR uint32 nes6502_getcycles()
+uint32_t nes6502_getcycles()
 {
    return cpu.total_cycles;
 }
@@ -1133,9 +1133,9 @@ IRAM_ATTR uint32 nes6502_getcycles()
 */
 IRAM_ATTR int nes6502_execute(int cycles)
 {
-   uint32 temp, addr; /* for macros */
-   uint8 btemp, baddr; /* for macros */
-   uint8 data;
+   uint32_t temp, addr; /* for macros */
+   uint8_t btemp, baddr; /* for macros */
+   uint8_t data;
 
    DECLARE_LOCAL_REGS();
    GET_GLOBAL_REGS();

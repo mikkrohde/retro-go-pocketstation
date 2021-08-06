@@ -28,8 +28,8 @@
 
 static struct
 {
-   uint16 enabled;
-   uint16 counter;
+   uint16_t enabled;
+   uint16_t counter;
 } irq;
 
 /********************************/
@@ -86,7 +86,7 @@ static void map42_hblank(int scanline)
 /******************************************/
 /* Mapper #42 write handler ($E000-$FFFF) */
 /******************************************/
-static void map42_write(uint32 address, uint8 value)
+static void map42_write(uint32_t address, uint8_t value)
 {
    switch (address & 0x03)
    {

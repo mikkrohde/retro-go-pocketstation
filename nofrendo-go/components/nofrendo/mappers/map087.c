@@ -27,7 +27,7 @@
 #include <nes.h>
 
 
-static void map87_write(uint32 address, uint8 value)
+static void map87_write(uint32_t address, uint8_t value)
 {
    UNUSED(address);
 /***

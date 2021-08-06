@@ -42,49 +42,49 @@
 
 typedef struct __attribute__((packed))
 {
-   uint8 magic[4];
-   uint8 prg_banks;
-   uint8 chr_banks;
-   uint8 rom_type;
-   uint8 mapper_hinybble;
-   uint32 reserved1;
-   uint32 reserved2;
+   uint8_t magic[4];
+   uint8_t prg_banks;
+   uint8_t chr_banks;
+   uint8_t rom_type;
+   uint8_t mapper_hinybble;
+   uint32_t reserved1;
+   uint32_t reserved2;
 } inesheader_t;
 
 typedef struct __attribute__((packed))
 {
-   uint8 magic[4];
-   uint8 sides;
-   uint8 reserved[11];
+   uint8_t magic[4];
+   uint8_t sides;
+   uint8_t reserved[11];
 } fdsheader_t;
 
 typedef struct
 {
    char filename[PATH_MAX + 1];
 
-   uint8 *data_ptr; // Top of our allocation
+   uint8_t *data_ptr; // Top of our allocation
    size_t data_len; // Size of our allocation
 
-   uint8 *prg_rom;
-   uint8 *chr_rom;
-   uint8 *prg_ram;
-   uint8 *chr_ram;
+   uint8_t *prg_rom;
+   uint8_t *chr_rom;
+   uint8_t *prg_ram;
+   uint8_t *chr_ram;
 
    int prg_rom_banks;
    int chr_rom_banks;
    int prg_ram_banks;
    int chr_ram_banks;
 
-   uint32 mapper_number;
-   uint32 flags;
-   uint32 system;
-   uint32 mirroring;
-   uint32 checksum;
+   uint32_t mapper_number;
+   uint32_t flags;
+   uint32_t system;
+   uint32_t mirroring;
+   uint32_t checksum;
 } rom_t;
 
 
 extern rom_t *rom_loadfile(const char *filename);
-extern rom_t *rom_loadmem(uint8 *data, size_t size);
+extern rom_t *rom_loadmem(uint8_t *data, size_t size);
 extern void rom_free(void);
 
 #endif /* _NES_ROM_H_ */

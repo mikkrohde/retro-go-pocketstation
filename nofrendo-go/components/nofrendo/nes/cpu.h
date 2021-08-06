@@ -53,12 +53,12 @@
 
 typedef struct
 {
-   uint32 pc_reg;
-   uint8 a_reg;
-   uint8 x_reg, y_reg;
-   uint8 s_reg, p_reg;
+   uint32_t pc_reg;
+   uint8_t a_reg;
+   uint8_t x_reg, y_reg;
+   uint8_t s_reg, p_reg;
 
-   uint8 *zp, *stack;
+   uint8_t *zp, *stack;
 
    bool int_pending;
    bool jammed;
@@ -72,7 +72,7 @@ extern int nes6502_execute(int cycles);
 extern void nes6502_nmi(void);
 extern void nes6502_irq(void);
 extern void nes6502_irq_clear(void);
-extern uint32 nes6502_getcycles(void);
+extern uint32_t nes6502_getcycles(void);
 extern void nes6502_burn(int cycles);
 
 extern nes6502_t *nes6502_init(mem_t *mem);
