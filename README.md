@@ -2,6 +2,9 @@
 Retro-Go is a launcher and framework to run emulators on the ODROID-GO and compatible ESP32(-S2) devices. 
 It comes with many emulators!
 
+This specific fork of [Ducalex/Retro-go](https://github.com/ducalex/retro-go) is for my own esp32 project, with some other wished functions. 
+Everything except, Supported systems, BIOS, Known issues, Acknowlegdement and license may be subject to change. (Licenses and Acknowlegdements will change based on the currently used version of [Retro-go](https://github.com/ducalex/retro-go))
+
 ### Supported systems:
 - NES
 - Gameboy
@@ -12,25 +15,6 @@ It comes with many emulators!
 - PC Engine
 - Lynx
 - SNES (work in progress)
-
-### Retro-Go features:
-- In-game menu
-- Favorites support
-- GB RTC adjust and save
-- GB GBC colorization palettes
-- More scaling options
-- Bilinear filtering
-- NES color palettes
-- PAL roms support
-- Smoother performance
-- Better compatibility
-- Double/Triple Speed
-- Customizable launcher
-- PNG cover art
-- Saved state screenshots
-- exFAT support
-- And more!
-
 
 # Screenshot
 ![Preview](retro-go-preview.jpg)
@@ -57,7 +41,6 @@ It comes with many emulators!
 | Volume  | Options menu  |
 
 Note: If you are stuck in an emulator, hold MENU while powering up the device to return to the launcher.
-
 
 # Game covers 
 The preferred cover art format is PNG with a resolution of 160x168 and I recommend post-processing your 
